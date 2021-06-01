@@ -1,40 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { ITask } from './interfaces/task.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { IDeleteTaskResponse, ITask } from './interfaces/task.interface';
 
 @Injectable()
 export class TasksService {
-  private tasks: ITask[] = [
-    {
-      id: '267627125715',
-      completed: false,
-      description: 'Task 1.',
-    },
-    {
-      id: '2676271324343315',
-      completed: true,
-      description: 'Task 2.',
-    },
-  ];
+  constructor(@InjectModel('Task') private readonly taskModel: Model<ITask>) {}
 
-  findAll(): ITask[] {
-    return this.tasks;
+  async findAll(): Promise<ITask[]> {
+    return await this.taskModel.find();
   }
 
-  findOne(id: string): ITask {
-    return this.tasks.find((i) => i.id === id);
+  async findOne(id: string): Promise<ITask> {
+    return await this.taskModel.findOne({ _id: id });
   }
 
-  createNew(task: Omit<ITask, 'id'>): ITask {
-    const newTask: ITask = {
-      ...task,
-      id: new Date().getUTCMilliseconds().toString(),
-    };
-    this.tasks.push(newTask);
-    return newTask;
+  async createNew(task: Omit<ITask, 'id'>): Promise<ITask> {
+    const createdTask = await this.taskModel.create(task);
+    return createdTask;
   }
 
-  deleteOne(id: string): string {
-    this.tasks = this.tasks.filter((i) => i.id !== id);
-    return `Task ${id} deleted`;
+  async deleteOne(id: string): Promise<ITask> {
+    return await this.taskModel.findByIdAndRemove(id);
+  }
+
+  async update(id: string, task: Omit<ITask, 'id'>): Promise<ITask> {
+    return await this.taskModel.findByIdAndUpdate(id, task, { new: true });
   }
 }

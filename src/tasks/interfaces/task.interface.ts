@@ -3,3 +3,9 @@ export interface ITask {
   description: string;
   completed: boolean;
 }
+
+export interface IDeleteTaskResponse {
+  ok?: number;
+  n?: number;
+  deletedCount?: number;
+}
