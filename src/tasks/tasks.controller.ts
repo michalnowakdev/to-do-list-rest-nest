@@ -34,6 +34,10 @@ export class TasksController {
   deleteTask(@Param('id') id): Promise<ITask> {
     return this.tasksService.deleteOne(id);
   }
+  @Delete()
+  deleteBulkTasks(): Promise<{ deletedCount?: number }> {
+    return this.tasksService.deleteMany();
+  }
 
   @Put(':id')
   updateTask(

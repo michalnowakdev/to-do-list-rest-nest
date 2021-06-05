@@ -24,6 +24,10 @@ export class TasksService {
     return await this.taskModel.findByIdAndRemove(id);
   }
 
+  async deleteMany() {
+    return await this.taskModel.deleteMany({ completed: true });
+  }
+
   async update(id: string, task: Omit<ITask, 'id'>): Promise<ITask> {
     return await this.taskModel.findByIdAndUpdate(id, task, { new: true });
   }
